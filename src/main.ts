@@ -1,34 +1,87 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
+class Node<T> {
+  public next: Node<T> | null = null;
+  public prev: Node<T> | null = null;
+  constructor(public data: T) {}
 }
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
+interface ILinkedList<T> {
+  insertAtBeginning(data: T): Node<T>;
+  insertAtEnd(data: T): Node<T>;
+  deleteNode(node: Node<T>): void;
+  traverse(): T[];
+  size(): number;
+  search(comparator: (data: T) => boolean): Node<T> | null;
 }
 
-// Please see the comment in the .eslintrc.json file about the suppressed rule!
-// Below is an example of how to use ESLint errors suppression. You can read more
-// at https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules
+export class LinkedList<T> implements ILinkedList<T> {
+  private head: Node<T> | null = null;
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function greeter(name: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-  // The name parameter should be of type string. Any is used only to trigger the rule.
-  return await delayedHello(name, Delays.Long);
+  public insertAtBeginning(data: T): Node<T> {
+    const node = new Node(data);
+    if (!this.head) {
+      this.head = node;
+    } else {
+      this.head.prev = node;
+      node.next = this.head;
+      this.head = node;
+    }
+    return node;
+  }
+
+  public insertAtEnd(data: T): Node<T> {
+    const node = new Node(data);
+    if (!this.head) {
+      this.head = node;
+    } else {
+      const getLast = (node: Node<T>): Node<T> => {
+        return node.next ? getLast(node.next) : node;
+      };
+
+      const lastNode = getLast(this.head);
+      node.prev = lastNode;
+      lastNode.next = node;
+    }
+    return node;
+  }
+
+  public deleteNode(node: Node<T>): void {
+    if (!node.prev) {
+      this.head = node.next;
+    } else {
+      const prevNode = node.prev;
+      prevNode.next = node.next;
+    }
+  }
+
+  public traverse(): T[] {
+    const array: T[] = [];
+    if (!this.head) {
+      return array;
+    }
+
+    const addToArray = (node: Node<T>): T[] => {
+      array.push(node.data);
+      return node.next ? addToArray(node.next) : array;
+    };
+    return addToArray(this.head);
+  }
+
+  public size(): number {
+    return this.traverse().length;
+  }
+
+  public search(comparator: (data: T) => boolean): Node<T> | null {
+    const checkNext = (node: Node<T>): Node<T> | null => {
+      if (comparator(node.data)) {
+        return node;
+      }
+      return node.next ? checkNext(node.next) : null;
+    };
+
+    return this.head ? checkNext(this.head) : null;
+  }
 }
+
+const linkedList = new LinkedList<string>();
+linkedList.insertAtBeginning('a');
+linkedList.insertAtEnd('b');
