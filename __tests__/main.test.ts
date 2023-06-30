@@ -8,10 +8,21 @@ describe('Linked list test', () => {
     l.insertAtEnd('b');
     l.insertAtEnd('c');
 
-    const t = l.traverse();
-    console.log(t);
+    l.getHead();
+    console.log(l.getHead());
+    l.traverseOne();
 
-    const hasA = l.search(() => true);
-    expect(hasA).toBeTruthy();
+    expect(l.getHead()).toBeTruthy();
+    expect(l.getHead().data).toBe('b');
+  });
+
+  it('correctly returns size of linked list', () => {
+    const l = new LinkedList<string>();
+
+    l.insertAtEnd('a');
+    l.insertAtEnd('b');
+    l.insertAtEnd('c');
+
+    expect(l.size()).toBe(3);
   });
 });

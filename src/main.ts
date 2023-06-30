@@ -66,6 +66,11 @@ export class LinkedList<T> implements ILinkedList<T> {
     return addToArray(this.head);
   }
 
+  public traverseOne(): void {
+    console.log('traversing one...');
+    this.head = this.head.next;
+  }
+
   public size(): number {
     return this.traverse().length;
   }
@@ -77,11 +82,10 @@ export class LinkedList<T> implements ILinkedList<T> {
       }
       return node.next ? checkNext(node.next) : null;
     };
-
     return this.head ? checkNext(this.head) : null;
   }
-}
 
-const linkedList = new LinkedList<string>();
-linkedList.insertAtBeginning('a');
-linkedList.insertAtEnd('b');
+  public getHead(): Node<T> | null {
+    return this.head;
+  }
+}
